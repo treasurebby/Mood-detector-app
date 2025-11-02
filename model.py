@@ -34,7 +34,8 @@ def preprocess_images(image_paths):
     return np.array(images) / 255.0  # Normalize to [0,1]
 
 def encode_labels(labels):
-    unique_labels = list(set(labels))
+    # Use a deterministic ordering for labels so mapping is reproducible
+    unique_labels = sorted(list(set(labels)))
     label_to_index = {label: idx for idx, label in enumerate(unique_labels)}
     indices = [label_to_index[label] for label in labels]
     return to_categorical(indices), unique_labels
@@ -72,3 +73,13 @@ model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=EPOCHS, bat
 # --- Save Model ---
 model.save('mood_detector_model.h5')
 print("Model trained and saved successfully!")
+# Save label names next to the model so the web app can map predictions to emotions
+try:
+    import json
+    base = os.path.splitext('mood_detector_model.h5')[0]
+    labels_path = base + '_labels.json'
+    with open(labels_path, 'w', encoding='utf-8') as f:
+        json.dump(label_names, f, ensure_ascii=False)
+    print(f"Saved label file to {labels_path}")
+except Exception as e:
+    print(f"Failed to save labels file: {e}")

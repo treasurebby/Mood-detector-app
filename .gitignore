@@ -3,8 +3,6 @@
 venv/
 env/
 
-# DeepFace cached weights and models
-.deepface/
 
 # Python cache and build files
 __pycache__/
