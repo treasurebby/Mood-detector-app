@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emotion Result 💫</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffb6c1, #ffcce0);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+    }
+
+    .popup {
+      background: #fff;
+      color: #333;
+      border-radius: 25px;
+      padding: 40px 60px;
+      box-shadow: 0 5px 25px rgba(255, 105, 180, 0.4);
+      animation: pop 0.6s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .emoji {
+      font-size: 5rem;
+    }
+
+    .emotion {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ff66b2;
+      margin-top: 10px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #fff;
+      background: #ff66b2;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    a:hover {
+      background: #ff3385;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup">
+    <div class="emoji">{{ emoji }}</div>
+    <div class="emotion">{{ emotion }}</div>
+    <a href="/">Try Again 💖</a>
+  </div>
+</body>
+</html>

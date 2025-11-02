@@ -1,0 +1,80 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# DeepFace cached weights and models
+.deepface/
+
+# Python cache and build files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+
+# Environment variables
+.env
+
+# IDE & OS files
+.vscode/
+.idea/
+*.code-workspace
+Thumbs.db
+
+# Uploaded images and user data
+uploads/
+static/uploads/
+instance/
+
+# Model or dataset files
+*.h5
+*.csv
+*.zip
+*.tar
+*.tar.gz
+
+# Saved models / checkpoints
+saved_models/
+checkpoints/
+model_checkpoints/
+*.ckpt
+*.hdf5
+
+# Dataset folders (large binaries)
+dataset/
+data/
+raw_data/
+
+# SQLite / DB files
+*.db
+*.sqlite
+*.sqlite3
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+*.whl
+
+# Test / CI
+.pytest_cache/
+coverage/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary
+tmp/
+temp/

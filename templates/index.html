@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emotion Detector 💖</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffb6c1, #ffcce0);
+      color: #333;
+      text-align: center;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    form {
+      background: #fff;
+      padding: 25px 35px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(255, 105, 180, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px 15px;
+      width: 250px;
+      border: 2px solid #ff99c8;
+      border-radius: 10px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    input[type="file"], video {
+      margin: 10px 0;
+    }
+
+    button {
+      background: #ff66b2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #ff3385;
+      transform: translateY(-2px);
+    }
+
+    video {
+      display: none;
+      border-radius: 15px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>💖 Emotion Detector 💖</h1>
+
+  <form action="/detect" method="POST" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Enter your full name" required>
+
+    <input type="file" name="image" accept="image/*" id="imageInput">
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <button type="button" id="captureBtn">📸 Live Capture</button>
+      <button type="button" id="snapBtn" style="display:none">📷 Take Photo</button>
+      <video id="camera" width="300" height="230" autoplay></video>
+      <img id="preview" style="display:none; width:300px; height:230px; object-fit:cover; border-radius:12px;" alt="Captured preview">
+    </div>
+
+    <button type="submit">Analyze Emotion 💫</button>
+  </form>
+
+  <script>
+    const captureBtn = document.getElementById('captureBtn');
+    const camera = document.getElementById('camera');
+    const imageInput = document.getElementById('imageInput');
+
+    let streamRef = null;
+
+    captureBtn.addEventListener('click', async () => {
+      if (!streamRef) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          streamRef = stream;
+          camera.srcObject = stream;
+          camera.style.display = 'block';
+          snapBtn.style.display = 'inline-block';
+          preview.style.display = 'none';
+          captureBtn.textContent = "🔴 Stop Camera";
+        } catch (err) {
+          alert('Could not access camera: ' + err.message);
+        }
+      } else {
+        const tracks = streamRef.getTracks();
+        tracks.forEach(track => track.stop());
+        streamRef = null;
+        camera.style.display = 'none';
+        snapBtn.style.display = 'none';
+        captureBtn.textContent = "📸 Live Capture";
+      }
+    });
+
+    snapBtn.addEventListener('click', async () => {
+      if (!streamRef) return;
+
+      // Create a canvas to capture the current video frame
+      const canvas = document.createElement('canvas');
+      canvas.width = camera.videoWidth || 300;
+      canvas.height = camera.videoHeight || 230;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
+
+      // Convert to blob and create a File to set on the file input
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          alert('Failed to capture image');
+          return;
+        }
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `capture_${timestamp}.png`;
+        const file = new File([blob], filename, { type: 'image/png' });
+
+        // Use DataTransfer to set the FileList on the file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
+
+        // Show preview
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+
+        // Stop camera after capture (optional). Comment this out if you want to take multiple photos.
+        const tracks = streamRef.getTracks();
+        tracks.forEach(t => t.stop());
+        streamRef = null;
+        camera.style.display = 'none';
+        snapBtn.style.display = 'none';
+        captureBtn.textContent = "📸 Live Capture";
+      }, 'image/png');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Use Git LFS for large binary model files if available
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.ckpt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+
+# Prevent CRLF conversions for binary files
+*.h5 -text
+*.ckpt -text
+*.pth -text
