@@ -145,6 +145,20 @@ def detect_emotion():
 
         # Use Keras model (CNN) for prediction
         km = get_keras_model()
+        # If no model is available, return a clear error instead of silently saving 'Unknown'
+        if km is None:
+            msg = (
+                "Model not found or TensorFlow unavailable. "
+                "Place your trained 'mood_detector_model.h5' in the project root or 'saved_models/' "
+                "and include an accompanying labels file (optional)."
+            )
+            print(msg)
+            accept = request.headers.get('Accept', '')
+            # For HTML requests render the result template with a clear message
+            if 'text/html' in accept or 'application/xhtml+xml' in accept:
+                return render_template('result.html', emotion='Model not found', emoji='⚠️')
+            return jsonify({'error': msg}), 503
+
         emotion = 'Unknown'
         if km is not None:
             try:
