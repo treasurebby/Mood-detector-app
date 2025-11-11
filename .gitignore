@@ -22,11 +22,18 @@ __pycache__/
 # Environment variables
 .env
 
+# Local env variants
+.env.local
+.env.*
+
 # IDE & OS files
 .vscode/
 .idea/
 *.code-workspace
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
 # Uploaded images and user data
 uploads/
@@ -52,6 +59,13 @@ dataset/
 data/
 raw_data/
 
+# Large ML artifacts (consider using Git LFS or external storage instead of committing large model files)
+# Example: use `git lfs track "*.h5"` and add a `.gitattributes` rule for large binary files.
+
+# Python/tooling caches
+.python-version
+.mypy_cache/
+
 # SQLite / DB files
 *.db
 *.sqlite
@@ -72,6 +86,11 @@ htmlcov/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Editor/project files
+.idea/
+.vscode/
+.ropeproject/
 
 # Temporary
 tmp/
