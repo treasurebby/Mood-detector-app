@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import json
 import numpy as np
 import cv2
+import requests
 
 # Lazy-loaded keras model
 _keras_model = None
@@ -108,6 +109,42 @@ def init_db():
     print("✅ Database initialized")
 
 init_db()
+
+# Try to download a model at startup if an env var MODEL_URL is provided.
+def ensure_model_present():
+    model_path = find_model_path()
+    if model_path:
+        return
+    model_url = os.environ.get('MODEL_URL')
+    labels_url = os.environ.get('MODEL_LABELS_URL') or os.environ.get('LABELS_URL')
+    if not model_url:
+        return
+
+    os.makedirs(os.path.join(os.getcwd(), 'saved_models'), exist_ok=True)
+    dest = os.path.join(os.getcwd(), 'saved_models', 'mood_detector_model.h5')
+    try:
+        print(f"Downloading model from MODEL_URL={model_url} to {dest}...")
+        with requests.get(model_url, stream=True, timeout=60) as r:
+            r.raise_for_status()
+            with open(dest, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+        print(f"Downloaded model to {dest}")
+        if labels_url:
+            dest_labels = os.path.splitext(dest)[0] + '_labels.json'
+            print(f"Downloading labels from {labels_url} to {dest_labels}...")
+            with requests.get(labels_url, timeout=30) as r2:
+                r2.raise_for_status()
+                with open(dest_labels, 'wb') as lf:
+                    lf.write(r2.content)
+            print(f"Downloaded labels to {dest_labels}")
+    except Exception as e:
+        print(f"Failed to download model/labels: {e}")
+
+
+# Attempt to fetch a model from MODEL_URL at startup (if set)
+ensure_model_present()
 
 # --- ROUTES ---
 
